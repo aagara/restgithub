@@ -1,23 +1,29 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
+
 function App() {
-  return (
+  const [data, setData] = useState([]);
+  const [keyword, setKeyword] = useState('');
+
+  const fetchData = () => {
+    fetch(`https://api.github.com/search/repositories?q=${keyword}`)
+      .then(response => response.json())
+      .then(responseData => {
+        setData(responseData.items)
+      })
+  }
+
+  const tableRows = data.map((item, index) => 
+    <tr key={index}><td>{item.full_name}</td><td><a href={item.html_url}>{item.html_url}</a></td></tr>
+  );
+  
+
+   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" onChange={(e) => setKeyword(e.target.value)} /> 
+      <button onClick={fetchData} value={keyword}>Fetch</button>
+      <table><tbody>{tableRows}</tbody></table> 
     </div>
   );
 }
